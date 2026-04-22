@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Solvexors — MBA Internship Platform</title>
+  <style>
+    :root {
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f5f5f5;
+      --color-text-primary: #111111;
+      --color-text-secondary: #666666;
+      --color-border-secondary: #d5d5d5;
+      --color-border-tertiary: #ebebeb;
+      --border-radius-md: 6px;
+      --border-radius-lg: 10px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f0f0;min-height:100vh}
+    .nav{display:flex;align-items:center;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+    .nav-logo{display:flex;align-items:center;gap:8px;padding:13px 18px;border-right:0.5px solid var(--color-border-tertiary)}
+    .logo-mark{width:26px;height:26px;background:#1D9E75;border-radius:6px;display:flex;align-items:center;justify-content:center}
+    .logo-mark svg{width:14px;height:14px;stroke:white;fill:none;stroke-width:2.2}
+    .logo-text{font-size:15px;font-weight:500;color:var(--color-text-primary);letter-spacing:-0.02em}
+    .logo-text span{color:#1D9E75}
+    .nav-tab{font-size:13px;padding:14px 15px;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;margin-bottom:-0.5px;transition:all 0.15s}
+    .nav-tab:hover{color:var(--color-text-primary);background:var(--color-background-secondary)}
+    .nav-tab.active{color:#0F6E56;border-bottom:2px solid #1D9E75;font-weight:500}
+    .page{display:none;padding:22px 20px;max-width:900px;margin:0 auto}
+    .page.active{display:block}
+    .sec-title{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+    .sec-sub{font-size:13px;color:var(--color-text-secondary);margin-bottom:18px}
+    .flbl{display:block;font-size:11px;color:var(--color-text-secondary);margin-bottom:4px;font-weight:500;letter-spacing:0.03em;text-transform:uppercase}
+    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+    .fgrid .full{grid-column:1/-1}
+    input,select,textarea{width:100%;font-size:13px;padding:8px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);outline:none;transition:border 0.15s}
+    input:focus,select:focus,textarea:focus{border-color:#1D9E75}
+    textarea{resize:vertical;min-height:68px}
+    .btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;padding:8px 16px;border-radius:var(--border-radius-md);cursor:pointer;transition:all 0.15s;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-weight:500}
+    .btn:hover{background:var(--color-background-secondary)}
+    .btn.primary{background:#1D9E75;color:white;border-color:#1D9E75}
+    .btn.primary:hover{background:#0F6E56}
+    .btn.success{background:#0F6E56;color:white;border-color:#0F6E56}
+    .btn.ai{background:#3C3489;color:white;border-color:#3C3489}
+    .btn.ai:hover{background:#26215C}
+    .chip-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+    .chip{font-size:12px;padding:4px 10px;border-radius:99px;cursor:pointer;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);background:var(--color-background-primary);transition:all 0.15s}
+    .chip.on{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+    .tag{font-size:11px;padding:2px 8px;border-radius:4px}
+    .tag.blue{background:#E6F1FB;color:#0C447C}
+    .tag.teal{background:#E1F5EE;color:#085041}
+    .tag.amber{background:#FAEEDA;color:#633806}
+    .tag.purple{background:#EEEDFE;color:#3C3489}
+    .tag.green{background:#EAF3DE;color:#27500A}
+    .tag.coral{background:#FAECE7;color:#712B13}
+    .slbl{font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;margin-top:18px;padding-bottom:6px;border-bottom:0.5px solid var(--color-border-tertiary)}
+    .card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:10px}
+    .toast{background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5;border-radius:var(--border-radius-md);padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+    .toast.show{display:block}
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
+    .stat{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px}
+    .stat-n{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+    .stat-l{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+    .upload-zone{border:1px dashed var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.15s;background:var(--color-background-secondary);position:relative}
+    .upload-zone:hover{border-color:#1D9E75;background:#E1F5EE}
+    .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .upload-icon{width:36px;height:36px;border-radius:8px;background:#E1F5EE;margin:0 auto 10px;display:flex;align-items:center;justify-content:center}
+    .upload-icon svg{width:18px;height:18px;stroke:#1D9E75;fill:none;stroke-width:2}
+    .extracted-box{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;margin-top:14px;display:none}
+    .extracted-box.show{display:block}
+    .ext-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+    .ext-row:last-child{border-bottom:none}
+    .ext-label{color:var(--color-text-secondary);font-size:12px}
+    .ext-val{font-weight:500;color:var(--color-text-primary);font-size:13px;text-align:right;max-width:65%}
+    .ai-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;background:#EEEDFE;color:#3C3489;border-radius:4px;padding:2px 7px;margin-left:6px;border:0.5px solid #AFA9EC}
+    .match-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px}
+    .score-col{text-align:center;flex-shrink:0;width:48px}
+    .score-n{font-size:20px;font-weight:500;color:#1D9E75}
+    .score-l{font-size:10px;color:var(--color-text-secondary)}
+    .match-info{flex:1;min-width:0}
+    .match-title{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+    .match-sub{font-size:12px;color:var(--color-text-secondary);margin-bottom:7px}
+    .match-acts{display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex-shrink:0}
+    .domain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+    .domain-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;cursor:pointer;transition:all 0.15s;background:var(--color-background-primary)}
+    .domain-card:hover{border-color:#1D9E75;background:#E1F5EE}
+    .domain-card.selected{border-color:#1D9E75;background:#E1F5EE}
+    .domain-card .d-name{font-size:12px;font-weight:500;color:var(--color-text-primary)}
+    .domain-card .d-sub{font-size:11px;color:var(--color-text-secondary)}
+    .screen-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:10px;overflow:hidden}
+    .screen-head{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer}
+    .screen-head:hover{background:var(--color-background-secondary)}
+    .avatar{width:36px;height:36px;border-radius:50%;background:#E1F5EE;color:#085041;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+    .s-status{margin-left:auto;font-size:11px;padding:3px 9px;border-radius:99px;font-weight:500}
+    .st-new{background:#E6F1FB;color:#0C447C}
+    .st-rev{background:#FAEEDA;color:#633806}
+    .st-short{background:#E1F5EE;color:#085041}
+    .st-rej{background:#FCEBEB;color:#A32D2D}
+    .screen-body{padding:14px 16px;border-top:0.5px solid var(--color-border-tertiary);display:none}
+    .screen-body.open{display:block}
+    .cr-row{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+    .cr-row:last-child{border-bottom:none}
+    .cr-l{color:var(--color-text-secondary)}
+    .cr-v{font-weight:500;color:var(--color-text-primary)}
+    .act-bar{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+    .role-block{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px;margin-top:10px}
+    .role-block-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .remove-btn{font-size:11px;color:#A32D2D;cursor:pointer;border:none;background:none;padding:2px 6px}
+    .wordmark{font-size:13px;color:var(--color-text-secondary);padding:13px 16px;margin-left:auto}
+  </style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <div class="logo-text">Solve<span>xors</span></div>
+  </div>
+  <div class="nav-tab active" onclick="go('dash')">Dashboard</div>
+  <div class="nav-tab" onclick="go('student')">Students</div>
+  <div class="nav-tab" onclick="go('company')">Companies</div>
+  <div class="nav-tab" onclick="go('match')">Match engine</div>
+  <div class="nav-tab" onclick="go('screen')">Screening</div>
+  <div class="wordmark">MBA Internship Platform</div>
+</div>
+
+<div class="page active" id="pg-dash">
+  <div class="sec-title" style="margin-bottom:16px">Overview</div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-n">147</div><div class="stat-l">MBA students</div></div>
+    <div class="stat"><div class="stat-n">42</div><div class="stat-l">Companies</div></div>
+    <div class="stat"><div class="stat-n">89</div><div class="stat-l">Active roles</div></div>
+    <div class="stat"><div class="stat-n">63</div><div class="stat-l">Placements</div></div>
+  </div>
+  <div class="slbl">Domain breakdown</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px">
+    <div class="card" style="padding:12px;text-align:center"><div style="font-size:18px;font-weight:500;color:#1D9E75">31</div><div style="font-size:12px;color:var(--color-text-secondary)">Strategy & Consulting</div></div>
+    <div class="card" style="padding:12px;text-align:center"><div style="font-size:18px;font-weight:500;color:#185FA5">24</div><div style="font-size:12px;color:var(--color-text-secondary)">Finance & Banking</div></div>
+    <div class="card" style="padding:12px;text-align:center"><div style="font-size:18px;font-weight:500;color:#3C3489">18</div><div style="font-size:12px;color:var(--color-text-secondary)">Hospital Management</div></div>
+    <div class="card" style="padding:12px;text-align:center"><div style="font-size:18px;font-weight:500;color:#993C1D">16</div><div style="font-size:12px;color:var(--color-text-secondary)">Product & Tech</div></div>
+  </div>
+  <div class="slbl">Recent activity</div>
+  <div class="card" style="padding:11px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:center">
+    <div style="width:7px;height:7px;border-radius:50%;background:#1D9E75;flex-shrink:0"></div>
+    <span style="font-size:13px;color:var(--color-text-primary)">Ananya Krishnan — resume parsed, 94% match with McKinsey Strategy Intern <span style="color:var(--color-text-secondary);font-size:12px">· 1hr ago</span></span>
+  </div>
+  <div class="card" style="padding:11px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:center">
+    <div style="width:7px;height:7px;border-radius:50%;background:#3C3489;flex-shrink:0"></div>
+    <span style="font-size:13px;color:var(--color-text-primary)">Apollo Hospitals posted 2 Hospital Management intern roles <span style="color:var(--color-text-secondary);font-size:12px">· 3hrs ago</span></span>
+  </div>
+  <div class="card" style="padding:11px 14px;margin-bottom:18px;display:flex;gap:10px;align-items:center">
+    <div style="width:7px;height:7px;border-radius:50%;background:#185FA5;flex-shrink:0"></div>
+    <span style="font-size:13px;color:var(--color-text-primary)">Goldman Sachs expanded to Operations & SCM domain <span style="color:var(--color-text-secondary);font-size:12px">· 1 day ago</span></span>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn" onclick="go('student')">Add student</button>
+    <button class="btn" onclick="go('company')">Add company</button>
+  </div>
+</div>
+
+<div class="page" id="pg-student">
+  <div class="sec-title">Student registration</div>
+  <div class="sec-sub">Upload resume for AI-assisted extraction, then review and complete the profile</div>
+  <div class="toast" id="s-toast">Student profile saved to Solvexors. AI-extracted details are live in the match engine.</div>
+
+  <div class="slbl">Step 1 — Upload resume</div>
+  <div class="upload-zone" id="upload-zone" onclick="triggerParse()">
+    <input type="file" accept=".pdf,.doc,.docx" onchange="handleFile(this)" />
+    <div class="upload-icon">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    </div>
+    <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px" id="upload-label">Drop resume here or click to upload</div>
+    <div style="font-size:12px;color:var(--color-text-secondary)">PDF, DOC, DOCX — Solvexors AI will extract key details automatically</div>
+  </div>
+
+  <div class="extracted-box" id="ext-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">AI-extracted profile <span class="ai-badge">Auto-filled</span></div>
+    </div>
+    <div class="ext-row"><span class="ext-label">Name</span><span class="ext-val" id="ex-name">—</span></div>
+    <div class="ext-row"><span class="ext-label">Institute</span><span class="ext-val" id="ex-inst">—</span></div>
+    <div class="ext-row"><span class="ext-label">Pre-MBA background</span><span class="ext-val" id="ex-bg">—</span></div>
+    <div class="ext-row"><span class="ext-label">Work experience</span><span class="ext-val" id="ex-exp">—</span></div>
+    <div class="ext-row"><span class="ext-label">Key skills detected</span><span class="ext-val" id="ex-skills">—</span></div>
+    <div class="ext-row"><span class="ext-label">Suggested specializations</span><span class="ext-val" id="ex-spec">—</span></div>
+    <div class="ext-row"><span class="ext-label">CGPA / Score</span><span class="ext-val" id="ex-cgpa">—</span></div>
+    <div style="margin-top:10px;font-size:12px;color:var(--color-text-secondary)">Fields below are auto-filled — please review and edit before saving.</div>
+  </div>
+
+  <div class="slbl">Step 2 — Review & complete profile</div>
+  <div class="fgrid">
+    <div><label class="flbl">Full name</label><input type="text" id="s-name" placeholder="Auto-filled from resume" /></div>
+    <div><label class="flbl">Email</label><input type="email" placeholder="priya@iimb.ac.in" /></div>
+    <div><label class="flbl">MBA institute</label>
+      <select id="s-inst">
+        <option>-- Select --</option>
+        <option>IIM Ahmedabad</option><option>IIM Bangalore</option><option>IIM Calcutta</option>
+        <option>ISB Hyderabad</option><option>XLRI Jamshedpur</option><option>FMS Delhi</option>
+        <option>SP Jain Mumbai</option><option>MDI Gurgaon</option><option>IIFT Delhi</option><option>Other</option>
+      </select>
+    </div>
+    <div><label class="flbl">MBA year</label>
+      <select><option>Year 1 (Summer)</option><option>Year 2 (Final)</option></select>
+    </div>
+    <div><label class="flbl">CGPA / Percentile</label><input type="text" id="s-cgpa" placeholder="Auto-filled" /></div>
+    <div><label class="flbl">Years of experience</label>
+      <select><option>0–1</option><option>2–3</option><option>4–5</option><option>6+</option></select>
+    </div>
+    <div class="full"><label class="flbl">Pre-MBA domain</label>
+      <select>
+        <option>-- Select --</option><option>Engineering / Tech</option><option>Finance / Banking</option>
+        <option>Consulting</option><option>Healthcare / Pharma</option><option>Hospital Administration</option>
+        <option>FMCG / Retail</option><option>Government / Public Sector</option>
+        <option>Media / Entertainment</option><option>Manufacturing</option><option>Other</option>
+      </select>
+    </div>
+    <div class="full"><label class="flbl">Key skills (AI-detected, editable)</label>
+      <input type="text" id="s-skills" placeholder="e.g. Excel, SQL, Financial modelling, Lean, SAP" />
+    </div>
+    <div class="full"><label class="flbl">Career summary</label>
+      <textarea id="s-summary" placeholder="Auto-filled from resume objective or summary section"></textarea>
+    </div>
+  </div>
+
+  <div class="slbl">Step 3 — Internship preferences</div>
+  <div style="margin-bottom:14px">
+    <label class="flbl">Preferred specialization(s)</label>
+    <div class="chip-group">
+      <div class="chip" onclick="tc(this)">Strategy & Consulting</div>
+      <div class="chip" onclick="tc(this)">Finance & Banking</div>
+      <div class="chip" onclick="tc(this)">Product Management</div>
+      <div class="chip" onclick="tc(this)">Marketing & Brand</div>
+      <div class="chip" onclick="tc(this)">Operations & SCM</div>
+      <div class="chip" onclick="tc(this)">Hospital Management</div>
+      <div class="chip" onclick="tc(this)">Healthcare Admin</div>
+      <div class="chip" onclick="tc(this)">HR & Organisational Behaviour</div>
+      <div class="chip" onclick="tc(this)">Data & Analytics</div>
+      <div class="chip" onclick="tc(this)">Entrepreneurship</div>
+      <div class="chip" onclick="tc(this)">General Management</div>
+    </div>
+  </div>
+  <div class="fgrid">
+    <div><label class="flbl">Preferred sector</label>
+      <select>
+        <option>Open to all</option><option>Management Consulting</option><option>BFSI</option>
+        <option>Hospitals & Healthcare</option><option>Pharma & Life Sciences</option>
+        <option>Tech / SaaS</option><option>E-commerce</option><option>FMCG / Retail</option>
+        <option>Manufacturing</option><option>Media</option>
+      </select>
+    </div>
+    <div><label class="flbl">Location preference</label>
+      <select>
+        <option>Open to any</option><option>Mumbai</option><option>Bangalore</option><option>Delhi / NCR</option>
+        <option>Hyderabad</option><option>Chennai</option><option>Pune</option><option>Remote / Hybrid</option>
+      </select>
+    </div>
+    <div><label class="flbl">Stipend expectation</label>
+      <select>
+        <option>No preference</option><option>₹30K–50K/mo</option><option>₹50K–75K/mo</option>
+        <option>₹75K–1L/mo</option><option>₹1L+/mo</option>
+      </select>
+    </div>
+    <div><label class="flbl">Duration</label>
+      <select><option>2 months</option><option>3 months</option><option>6 months</option><option>Flexible</option></select>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:6px">
+    <button class="btn primary" onclick="saveStudent()">Save to Solvexors</button>
+  </div>
+</div>
+
+<div class="page" id="pg-company">
+  <div class="sec-title">Company portal</div>
+  <div class="sec-sub">Register your company on Solvexors, select active domains, and post internship roles</div>
+  <div class="toast" id="c-toast">Company registered on Solvexors. Roles are live and visible to matched MBA candidates.</div>
+
+  <div class="slbl">Company details</div>
+  <div class="fgrid">
+    <div><label class="flbl">Company name</label><input type="text" placeholder="e.g. Apollo Hospitals" /></div>
+    <div><label class="flbl">HQ location</label><input type="text" placeholder="Chennai, India" /></div>
+    <div><label class="flbl">Company size</label>
+      <select><option>Startup</option><option>Small (50–500)</option><option>Mid-size</option><option>Large (5000+)</option><option>MNC</option></select>
+    </div>
+    <div><label class="flbl">Contact email</label><input type="email" placeholder="talent@company.com" /></div>
+    <div class="full"><label class="flbl">Company overview</label>
+      <textarea placeholder="About the company, culture, and what MBA interns can expect..."></textarea>
+    </div>
+  </div>
+
+  <div class="slbl">Active domains — select all that apply</div>
+  <div class="domain-grid">
+    <div class="domain-card selected" onclick="this.classList.toggle('selected')"><div class="d-name">Strategy & Consulting</div><div class="d-sub">Corp strategy, growth</div></div>
+    <div class="domain-card" onclick="this.classList.toggle('selected')"><div class="d-name">Finance & Banking</div><div class="d-sub">IB, PE, treasury, CFO</div></div>
+    <div class="domain-card" onclick="this.classList.toggle('selected')"><div class="d-name">Hospital Management</div><div class="d-sub">Ops, admin, quality</div></div>
+    <div class="domain-card" onclick="this.classList.toggle('selected')"><div class="d-name">Healthcare Admin</div><div class="d-sub">Policy, public health</div></div>
+    <div class="domain-card" onclick="this.classList.toggle('selected')"><div class="d-name">Product Management</div><div class="d-sub">PM, UX, tech mgmt</div></div>
+    <div class="domain-card" onclick="this.classList.toggle('selected')"><div class="d-name">Marketing & Brand</div><div class="d-sub">Brand, digital, GTM</div></div>
+    <div class="domain-card" onclick="this.classList.toggle('selected')"><div class="d-name">Operations & SCM</div><div class="d-sub">Logistics, lean, supply</div></div>
+    <div class="domain-card" onclick="this.classList.toggle('selected')"><div class="d-name">Data & Analytics</div><div class="d-sub">BI, AI, data science</div></div>
+    <div class="domain-card" onclick="this.classList.toggle('selected')"><div class="d-name">HR & OB</div><div class="d-sub">Talent, culture, L&D</div></div>
+    <div class="domain-card" onclick="this.classList.toggle('selected')"><div class="d-name">Entrepreneurship</div><div class="d-sub">Ventures, incubation</div></div>
+    <div class="domain-card" onclick="this.classList.toggle('selected')"><div class="d-name">General Management</div><div class="d-sub">Cross-functional GM</div></div>
+    <div class="domain-card" onclick="this.classList.toggle('selected')"><div class="d-name">International Business</div><div class="d-sub">Trade, global ops</div></div>
+  </div>
+
+  <div class="slbl">Internship roles</div>
+  <div id="roles-container">
+    <div class="role-block" id="role-1">
+      <div class="role-block-header">
+        <div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Role 1</div>
+        <button class="remove-btn" onclick="removeRole('role-1')">Remove</button>
+      </div>
+      <div class="fgrid">
+        <div><label class="flbl">Role title</label><input type="text" placeholder="e.g. Hospital Operations Intern" /></div>
+        <div><label class="flbl">Domain</label>
+          <select>
+            <option>Strategy & Consulting</option><option>Finance & Banking</option>
+            <option>Hospital Management</option><option>Healthcare Admin</option>
+            <option>Product Management</option><option>Marketing & Brand</option>
+            <option>Operations & SCM</option><option>Data & Analytics</option>
+            <option>HR & OB</option><option>General Management</option>
+          </select>
+        </div>
+        <div><label class="flbl">Location</label>
+          <select><option>Mumbai</option><option>Bangalore</option><option>Delhi/NCR</option><option>Hyderabad</option><option>Chennai</option><option>Pune</option><option>Remote</option><option>Hybrid</option></select>
+        </div>
+        <div><label class="flbl">Stipend (₹/mo)</label><input type="text" placeholder="e.g. 60,000" /></div>
+        <div><label class="flbl">Openings</label><input type="number" placeholder="e.g. 2" min="1" /></div>
+        <div><label class="flbl">Duration</label>
+          <select><option>2 months</option><option>3 months</option><option>6 months</option><option>Flexible</option></select>
+        </div>
+        <div class="full"><label class="flbl">Role description</label>
+          <textarea placeholder="Responsibilities, project scope, and expected deliverables..."></textarea>
+        </div>
+        <div class="full"><label class="flbl">Preferred institutes (optional)</label>
+          <input type="text" placeholder="e.g. IIM A, ISB — leave blank for all" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:4px">
+    <button class="btn" onclick="addRole()">+ Add another role</button>
+    <button class="btn primary" onclick="saveCompany()">Post on Solvexors</button>
+  </div>
+</div>
+
+<div class="page" id="pg-match">
+  <div class="sec-title">Match engine</div>
+  <div class="sec-sub">Solvexors AI scores every student-role pair across all domains</div>
+  <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+    <div style="flex:1;min-width:140px"><label class="flbl">Domain filter</label>
+      <select onchange="filterMatch(this.value)">
+        <option value="all">All domains</option>
+        <option value="Strategy">Strategy & Consulting</option>
+        <option value="Finance">Finance & Banking</option>
+        <option value="Hospital">Hospital Management</option>
+        <option value="Healthcare">Healthcare Admin</option>
+        <option value="Product">Product Management</option>
+        <option value="Operations">Operations & SCM</option>
+      </select>
+    </div>
+    <div style="flex:1;min-width:140px"><label class="flbl">Score threshold</label>
+      <select><option>All matches</option><option>80%+</option><option>90%+</option></select>
+    </div>
+  </div>
+  <div id="match-list">
+    <div class="match-card" data-domain="Strategy">
+      <div class="score-col"><div class="score-n">94%</div><div class="score-l">match</div></div>
+      <div class="match-info">
+        <div class="match-title">Ananya Krishnan → McKinsey & Co. · Strategy Intern</div>
+        <div class="match-sub">IIM Bangalore · Finance background · 3 yrs · Resume parsed by Solvexors AI</div>
+        <div class="chip-group"><span class="tag teal">Strategy</span><span class="tag blue">Mumbai</span><span class="tag green">₹1L/mo</span><span class="tag purple">Resume match</span></div>
+      </div>
+      <div class="match-acts">
+        <button class="btn" style="font-size:12px;padding:5px 11px">Details ↗</button>
+        <button class="btn success" style="font-size:12px;padding:5px 11px;color:white">Confirm</button>
+      </div>
+    </div>
+    <div class="match-card" data-domain="Hospital">
+      <div class="score-col"><div class="score-n">91%</div><div class="score-l">match</div></div>
+      <div class="match-info">
+        <div class="match-title">Meera Nair → Apollo Hospitals · Hospital Ops Intern</div>
+        <div class="match-sub">ISB Hyderabad · Healthcare Admin background · 4 yrs · Resume parsed</div>
+        <div class="chip-group"><span class="tag purple">Hospital Mgmt</span><span class="tag teal">Chennai</span><span class="tag green">₹55K/mo</span><span class="tag coral">Healthcare</span></div>
+      </div>
+      <div class="match-acts">
+        <button class="btn" style="font-size:12px;padding:5px 11px">Details ↗</button>
+        <button class="btn success" style="font-size:12px;padding:5px 11px;color:white">Confirm</button>
+      </div>
+    </div>
+    <div class="match-card" data-domain="Finance">
+      <div class="score-col"><div class="score-n">88%</div><div class="score-l">match</div></div>
+      <div class="match-info">
+        <div class="match-title">Rohan Mehta → Goldman Sachs · IB Intern</div>
+        <div class="match-sub">IIM Ahmedabad · Engineering background · 4 yrs · Resume parsed</div>
+        <div class="chip-group"><span class="tag blue">Finance</span><span class="tag teal">Mumbai</span><span class="tag green">₹90K/mo</span><span class="tag amber">Quant skills</span></div>
+      </div>
+      <div class="match-acts">
+        <button class="btn" style="font-size:12px;padding:5px 11px">Details ↗</button>
+        <button class="btn success" style="font-size:12px;padding:5px 11px;color:white">Confirm</button>
+      </div>
+    </div>
+    <div class="match-card" data-domain="Healthcare">
+      <div class="score-col"><div class="score-n">85%</div><div class="score-l">match</div></div>
+      <div class="match-info">
+        <div class="match-title">Kabir Sharma → Fortis Healthcare · Strategy & Planning Intern</div>
+        <div class="match-sub">FMS Delhi · Pharma background · 3 yrs · Resume parsed</div>
+        <div class="chip-group"><span class="tag purple">Healthcare Admin</span><span class="tag teal">Delhi/NCR</span><span class="tag green">₹60K/mo</span><span class="tag coral">Pharma</span></div>
+      </div>
+      <div class="match-acts">
+        <button class="btn" style="font-size:12px;padding:5px 11px">Details ↗</button>
+        <button class="btn success" style="font-size:12px;padding:5px 11px;color:white">Confirm</button>
+      </div>
+    </div>
+    <div class="match-card" data-domain="Product">
+      <div class="score-col"><div class="score-n">82%</div><div class="score-l">match</div></div>
+      <div class="match-info">
+        <div class="match-title">Sneha Patel → Amazon India · PM Intern</div>
+        <div class="match-sub">ISB Hyderabad · Tech background · 5 yrs · Resume parsed</div>
+        <div class="chip-group"><span class="tag blue">Product Mgmt</span><span class="tag teal">Bangalore</span><span class="tag green">₹85K/mo</span><span class="tag amber">Tech skills</span></div>
+      </div>
+      <div class="match-acts">
+        <button class="btn" style="font-size:12px;padding:5px 11px">Details ↗</button>
+        <button class="btn success" style="font-size:12px;padding:5px 11px;color:white">Confirm</button>
+      </div>
+    </div>
+    <div class="match-card" data-domain="Operations">
+      <div class="score-col"><div class="score-n">79%</div><div class="score-l">match</div></div>
+      <div class="match-info">
+        <div class="match-title">Arjun Verma → Mahindra Logistics · SCM Intern</div>
+        <div class="match-sub">MDI Gurgaon · Manufacturing background · 2 yrs · Resume parsed</div>
+        <div class="chip-group"><span class="tag amber">Operations</span><span class="tag teal">Pune</span><span class="tag green">₹45K/mo</span><span class="tag blue">Lean certified</span></div>
+      </div>
+      <div class="match-acts">
+        <button class="btn" style="font-size:12px;padding:5px 11px">Details ↗</button>
+        <button class="btn success" style="font-size:12px;padding:5px 11px;color:white">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="pg-screen">
+  <div class="sec-title">Screening pipeline</div>
+  <div class="sec-sub">Track all Solvexors candidates — click a card to expand and take action</div>
+  <div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">
+    <span class="tag teal" style="padding:5px 12px;border-radius:99px;font-size:12px;cursor:pointer" onclick="filterScreen('')">All (12)</span>
+    <span class="chip" onclick="filterScreen('st-new')">New (4)</span>
+    <span class="chip" onclick="filterScreen('st-rev')">Under review (5)</span>
+    <span class="chip" onclick="filterScreen('st-short')">Shortlisted (2)</span>
+    <span class="chip" onclick="filterScreen('st-rej')">Rejected (1)</span>
+  </div>
+  <div id="screen-list">
+    <div class="screen-card" data-status="st-short">
+      <div class="screen-head" onclick="expandScreen(this)">
+        <div class="avatar">AK</div>
+        <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Ananya Krishnan</div><div style="font-size:12px;color:var(--color-text-secondary)">McKinsey — Strategy Intern</div></div>
+        <span class="s-status st-short">Shortlisted</span>
+      </div>
+      <div class="screen-body">
+        <div class="cr-row"><span class="cr-l">Match score</span><span class="cr-v">94%</span></div>
+        <div class="cr-row"><span class="cr-l">Domain</span><span class="cr-v">Strategy & Consulting</span></div>
+        <div class="cr-row"><span class="cr-l">Resume parsed</span><span class="cr-v">Yes — 3 roles, IIM B, Finance <span class="ai-badge">Solvexors AI</span></span></div>
+        <div class="cr-row"><span class="cr-l">Work exp</span><span class="cr-v">3 yrs (Finance sector)</span></div>
+        <div class="cr-row"><span class="cr-l">CGPA</span><span class="cr-v">3.9 / 4.0</span></div>
+        <div class="cr-row"><span class="cr-l">Current stage</span><span class="cr-v">Case interview — May 2</span></div>
+        <div class="act-bar">
+          <button class="btn success" style="font-size:12px;padding:6px 12px;color:white">Advance to offer</button>
+          <button class="btn" style="font-size:12px;padding:6px 12px;color:#A32D2D;border-color:#F09595">Reject</button>
+        </div>
+      </div>
+    </div>
+    <div class="screen-card" data-status="st-short">
+      <div class="screen-head" onclick="expandScreen(this)">
+        <div class="avatar" style="background:#EEEDFE;color:#3C3489">MN</div>
+        <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Meera Nair</div><div style="font-size:12px;color:var(--color-text-secondary)">Apollo Hospitals — Hospital Ops Intern</div></div>
+        <span class="s-status st-short">Shortlisted</span>
+      </div>
+      <div class="screen-body">
+        <div class="cr-row"><span class="cr-l">Match score</span><span class="cr-v">91%</span></div>
+        <div class="cr-row"><span class="cr-l">Domain</span><span class="cr-v">Hospital Management</span></div>
+        <div class="cr-row"><span class="cr-l">Resume parsed</span><span class="cr-v">Yes — Healthcare admin, ISB <span class="ai-badge">Solvexors AI</span></span></div>
+        <div class="cr-row"><span class="cr-l">Work exp</span><span class="cr-v">4 yrs (Hospital admin)</span></div>
+        <div class="cr-row"><span class="cr-l">Current stage</span><span class="cr-v">Panel interview — May 5</span></div>
+        <div class="act-bar">
+          <button class="btn success" style="font-size:12px;padding:6px 12px;color:white">Advance to offer</button>
+          <button class="btn" style="font-size:12px;padding:6px 12px;color:#A32D2D;border-color:#F09595">Reject</button>
+        </div>
+      </div>
+    </div>
+    <div class="screen-card" data-status="st-rev">
+      <div class="screen-head" onclick="expandScreen(this)">
+        <div class="avatar">RM</div>
+        <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Rohan Mehta</div><div style="font-size:12px;color:var(--color-text-secondary)">Goldman Sachs — IB Intern</div></div>
+        <span class="s-status st-rev">Under review</span>
+      </div>
+      <div class="screen-body">
+        <div class="cr-row"><span class="cr-l">Match score</span><span class="cr-v">88%</span></div>
+        <div class="cr-row"><span class="cr-l">Domain</span><span class="cr-v">Finance & Banking</span></div>
+        <div class="cr-row"><span class="cr-l">Resume parsed</span><span class="cr-v">Yes — IIM A, 4 roles <span class="ai-badge">Solvexors AI</span></span></div>
+        <div class="cr-row"><span class="cr-l">Current stage</span><span class="cr-v">Resume review — pending HR</span></div>
+        <div class="act-bar">
+          <button class="btn primary" style="font-size:12px;padding:6px 12px">Move to shortlist</button>
+          <button class="btn" style="font-size:12px;padding:6px 12px;color:#A32D2D;border-color:#F09595">Reject</button>
+        </div>
+      </div>
+    </div>
+    <div class="screen-card" data-status="st-new">
+      <div class="screen-head" onclick="expandScreen(this)">
+        <div class="avatar" style="background:#EEEDFE;color:#3C3489">KS</div>
+        <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Kabir Sharma</div><div style="font-size:12px;color:var(--color-text-secondary)">Fortis Healthcare — Strategy & Planning Intern</div></div>
+        <span class="s-status st-new">New</span>
+      </div>
+      <div class="screen-body">
+        <div class="cr-row"><span class="cr-l">Match score</span><span class="cr-v">85%</span></div>
+        <div class="cr-row"><span class="cr-l">Domain</span><span class="cr-v">Healthcare Admin</span></div>
+        <div class="cr-row"><span class="cr-l">Resume parsed</span><span class="cr-v">Yes — Pharma ops, FMS Delhi <span class="ai-badge">Solvexors AI</span></span></div>
+        <div class="cr-row"><span class="cr-l">Current stage</span><span class="cr-v">Not yet reviewed</span></div>
+        <div class="act-bar">
+          <button class="btn primary" style="font-size:12px;padding:6px 12px">Start review</button>
+          <button class="btn" style="font-size:12px;padding:6px 12px;color:#A32D2D;border-color:#F09595">Reject</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>{
+    const ids=['dash','student','company','match','screen'];
+    t.classList.toggle('active',ids[i]===id);
+  });
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='pg-'+id));
+}
+function tc(el){el.classList.toggle('on')}
+let roleCount=1;
+function addRole(){
+  roleCount++;
+  const c=document.getElementById('roles-container');
+  const d=document.createElement('div');
+  d.className='role-block';d.id='role-'+roleCount;
+  d.innerHTML=`<div class="role-block-header"><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Role ${roleCount}</div><button class="remove-btn" onclick="removeRole('role-${roleCount}')">Remove</button></div><div class="fgrid"><div><label class="flbl">Role title</label><input type="text" placeholder="e.g. Finance Analyst Intern"/></div><div><label class="flbl">Domain</label><select><option>Strategy & Consulting</option><option>Finance & Banking</option><option>Hospital Management</option><option>Healthcare Admin</option><option>Product Management</option><option>Marketing & Brand</option><option>Operations & SCM</option><option>Data & Analytics</option><option>HR & OB</option><option>General Management</option></select></div><div><label class="flbl">Location</label><select><option>Mumbai</option><option>Bangalore</option><option>Delhi/NCR</option><option>Hyderabad</option><option>Chennai</option><option>Pune</option><option>Remote</option><option>Hybrid</option></select></div><div><label class="flbl">Stipend (₹/mo)</label><input type="text" placeholder="e.g. 60,000"/></div><div><label class="flbl">Openings</label><input type="number" placeholder="e.g. 2" min="1"/></div><div><label class="flbl">Duration</label><select><option>2 months</option><option>3 months</option><option>6 months</option><option>Flexible</option></select></div><div class="full"><label class="flbl">Role description</label><textarea placeholder="Responsibilities and deliverables..."></textarea></div></div>`;
+  c.appendChild(d);
+}
+function removeRole(id){
+  const el=document.getElementById(id);
+  if(el&&document.querySelectorAll('.role-block').length>1)el.remove();
+}
+function triggerParse(){
+  document.getElementById('upload-label').textContent='resume_demo.pdf — parsing with Solvexors AI...';
+  setTimeout(()=>{
+    document.getElementById('upload-label').textContent='resume_demo.pdf — parsed successfully';
+    document.getElementById('upload-zone').style.borderColor='#1D9E75';
+    const d=['Priya Venkataraman','IIM Bangalore','Finance / Banking','4 years','Excel, SQL, Financial modelling, SAP, PowerPoint','Strategy & Consulting, Finance & Banking','3.8 / 4.0'];
+    document.getElementById('ex-name').textContent=d[0];
+    document.getElementById('ex-inst').textContent=d[1];
+    document.getElementById('ex-bg').textContent=d[2];
+    document.getElementById('ex-exp').textContent=d[3];
+    document.getElementById('ex-skills').textContent=d[4];
+    document.getElementById('ex-spec').textContent=d[5];
+    document.getElementById('ex-cgpa').textContent=d[6];
+    document.getElementById('s-name').value=d[0];
+    document.getElementById('s-cgpa').value=d[6];
+    document.getElementById('s-skills').value=d[4];
+    document.getElementById('ext-box').classList.add('show');
+  },1000);
+}
+function handleFile(input){
+  if(!input.files||!input.files[0])return;
+  document.getElementById('upload-label').textContent=input.files[0].name+' — parsing...';
+  setTimeout(()=>{
+    document.getElementById('upload-label').textContent=input.files[0].name+' — parsed';
+    document.getElementById('upload-zone').style.borderColor='#1D9E75';
+    document.getElementById('ext-box').classList.add('show');
+  },1200);
+}
+function saveStudent(){
+  const t=document.getElementById('s-toast');t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+function saveCompany(){
+  const t=document.getElementById('c-toast');t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+function filterMatch(domain){
+  document.querySelectorAll('#match-list .match-card').forEach(c=>{
+    c.style.display=(domain==='all'||c.dataset.domain===domain)?'flex':'none';
+  });
+}
+function filterScreen(status){
+  document.querySelectorAll('#screen-list .screen-card').forEach(c=>{
+    c.style.display=(!status||c.dataset.status===status)?'block':'none';
+  });
+}
+function expandScreen(head){head.nextElementSibling.classList.toggle('open')}
+</script>
+
+</body>
+</html>
